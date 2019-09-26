@@ -45,6 +45,54 @@ function QuickSort(array $container)
     return array_merge($left, [$container[0]], $right);
 }
 
+/**
+ * 找到中间点
+ *
+ * @param $r
+ * @param $low
+ * @param $high
+ *
+ * @return mixed
+ */
+function findMidpoint(&$r, $low, $high)
+{
+    $x = $r[$low];
+
+    while ($low < $high) {
+        while (($low < $high) && $r[$high] >= $x) {
+            $high--;
+        }
+        $r[$low] = $r[$high];
+
+        while ($low < $high && $r[$low] <= $x) {
+            $low++;
+        }
+        $r[$high] = $r[$low];
+    }
+
+    $r[$low] = $x;
+    return $low;
+}
+
+/**
+ * 快速排序，第二种实现
+ *
+ * @param      $r
+ * @param int  $low
+ * @param null $high
+ */
+function QuickSort2(&$r, $low = 0, $high = null)
+{
+    $high === null && $high = count($r) - 1;
+
+    if ($low < $high) {
+        $temp = findMidpoint($r, $low, $high);
+        QuickSort2($r, $low, $temp - 1);
+        QuickSort2($r, $temp + 1, $high);
+    }
+}
+
+
 // +--------------------------------------------------------------------------
 // | 方案测试
 // +--------------------------------------------------------------------------
@@ -82,3 +130,13 @@ var_dump(QuickSort([4, 21, 41, 2, 53, 1, 213, 31, 21, 423]));
  *  2. 不断将问题分解（或者说缩小规模），直到符合基线条件
  * （D&C 并非解决问题的算法，而是一种解决问题的思路）
  */
+
+// 当数据量大时，比如100万时，比第一种快速排序快大概0.4s
+$a = [];
+for ($i = 0; $i<100;$i++) {
+    $a[] = random_int(0,99999);
+}
+echo microtime(true) . PHP_EOL;
+QuickSort2($a);
+var_dump($a);
+echo microtime(true) . PHP_EOL;
